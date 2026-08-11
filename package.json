@@ -1,9 +1,10 @@
 {
-  "name": "bubbles-device-client",
+  "name": "bubbles-npm-user-app",
   "version": "0.1.0",
   "description": "Zero-dependency client for creating and updating devices via a bearer-auth API.",
   "type": "module",
   "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "exports": {
     ".": "./src/index.js"
   },

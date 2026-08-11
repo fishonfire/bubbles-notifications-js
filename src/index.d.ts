@@ -12,7 +12,8 @@ export interface DeviceClientOptions {
   baseUrl: string;
   token?: string | (() => string | Promise<string>) | null;
   fetch?: typeof fetch;
-  devicePath?: string;
+  createPath?: string;
+  updatePath?: string;
   updateMethod?: 'PATCH' | 'PUT';
   defaultHeaders?: Record<string, string>;
 }

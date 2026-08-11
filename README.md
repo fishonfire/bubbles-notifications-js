@@ -13,16 +13,16 @@ It currently supports:
 npm install bubbles-device-client
 ```
 
-## API assumptions
+## API defaults
 
-Based on the OpenAPI-style snippets you shared, this package assumes:
+Based on the concrete routes you shared, this package now defaults to:
 
-- create endpoint: `POST /devices`
-- update endpoint: `PATCH /devices/:id`
+- create endpoint: `POST /api/devices/create`
+- update endpoint: `PUT /api/devices/:id`
 - bearer authentication via `Authorization: Bearer <token>`
 - JSON request and response bodies
 
-If your API uses a different path or uses `PUT` instead of `PATCH` for updates, you can configure that.
+If your API paths change later, you can configure them.
 
 ## Usage
 
@@ -33,6 +33,9 @@ const client = new DeviceClient({
   baseUrl: 'https://api.example.com',
   token: 'your-jwt-or-access-token',
 });
+
+// create -> POST /api/devices/create
+// update -> PUT /api/devices/:id
 
 const created = await client.createDevice({
   device_token: 'abc123',
@@ -46,29 +49,34 @@ const updated = await client.updateDevice(created.id, {
 
 ## Custom update method
 
+`PUT` is the default update method.
+
+If you ever need to override it:
+
 ```js
 const client = new DeviceClient({
   baseUrl: 'https://api.example.com',
   token: 'your-token',
-  updateMethod: 'PUT',
+  updateMethod: 'PATCH',
 });
 ```
 
 You can also override it per request:
 
 ```js
-await client.updateDevice(123, { platform: 'android' }, { method: 'PUT' });
+await client.updateDevice(123, { platform: 'android' }, { method: 'PATCH' });
 ```
 
-## Custom device path
+## Custom paths
 
-If your endpoints live under a versioned path, configure `devicePath`:
+If your endpoints live somewhere else, configure them separately:
 
 ```js
 const client = new DeviceClient({
   baseUrl: 'https://api.example.com',
   token: 'your-token',
-  devicePath: '/api/devices',
+  createPath: '/api/devices/create',
+  updatePath: '/api/devices',
 });
 ```
 

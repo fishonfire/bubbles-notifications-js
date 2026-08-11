@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { ApiError, DeviceClient } from '../src/index.js';
 
-test('createDevice sends POST request with bearer token and JSON body', async () => {
+test('createDevice sends POST request to /api/devices/create with bearer token and JSON body', async () => {
   const calls = [];
   const client = new DeviceClient({
     baseUrl: 'https://api.example.com/',
@@ -17,14 +17,14 @@ test('createDevice sends POST request with bearer token and JSON body', async ()
   const result = await client.createDevice({ platform: 'ios', token: 'abc' });
 
   assert.deepEqual(result, { id: 42, name: "Jane's Phone" });
-  assert.equal(calls[0].url, 'https://api.example.com/devices');
+  assert.equal(calls[0].url, 'https://api.example.com/api/devices/create');
   assert.equal(calls[0].options.method, 'POST');
   assert.equal(calls[0].options.headers.Authorization, 'Bearer token-123');
   assert.equal(calls[0].options.headers['Content-Type'], 'application/json');
   assert.equal(calls[0].options.body, JSON.stringify({ platform: 'ios', token: 'abc' }));
 });
 
-test('updateDevice uses configured PATCH method by default', async () => {
+test('updateDevice uses configured PUT method and /api/devices/:id by default', async () => {
   const calls = [];
   const client = new DeviceClient({
     baseUrl: 'https://api.example.com',
@@ -36,11 +36,11 @@ test('updateDevice uses configured PATCH method by default', async () => {
 
   await client.updateDevice(7, { enabled: true });
 
-  assert.equal(calls[0].url, 'https://api.example.com/devices/7');
-  assert.equal(calls[0].options.method, 'PATCH');
+  assert.equal(calls[0].url, 'https://api.example.com/api/devices/7');
+  assert.equal(calls[0].options.method, 'PUT');
 });
 
-test('updateDevice can override method to PUT', async () => {
+test('updateDevice can override method to PATCH', async () => {
   const calls = [];
   const client = new DeviceClient({
     baseUrl: 'https://api.example.com',
@@ -50,9 +50,9 @@ test('updateDevice can override method to PUT', async () => {
     },
   });
 
-  await client.updateDevice(9, { enabled: false }, { method: 'PUT' });
+  await client.updateDevice(9, { enabled: false }, { method: 'PATCH' });
 
-  assert.equal(calls[0].options.method, 'PUT');
+  assert.equal(calls[0].options.method, 'PATCH');
 });
 
 test('throws ApiError for unauthorized responses', async () => {

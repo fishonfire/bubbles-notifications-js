@@ -15,8 +15,9 @@ export class DeviceClient {
     baseUrl,
     token,
     fetch: fetchImpl = globalThis.fetch,
-    devicePath = '/devices',
-    updateMethod = 'PATCH',
+    createPath = '/api/devices/create',
+    updatePath = '/api/devices',
+    updateMethod = 'PUT',
     defaultHeaders = {},
   } = {}) {
     if (!baseUrl) {
@@ -30,14 +31,15 @@ export class DeviceClient {
     this.baseUrl = stripTrailingSlash(baseUrl);
     this.token = token;
     this.fetch = fetchImpl;
-    this.devicePath = normalizePath(devicePath);
+    this.createPath = normalizePath(createPath);
+    this.updatePath = normalizePath(updatePath);
     this.updateMethod = normalizeMethod(updateMethod, ['PATCH', 'PUT']);
     this.defaultHeaders = { ...defaultHeaders };
   }
 
   async createDevice(deviceParams, options = {}) {
     return this.#request({
-      path: this.devicePath,
+      path: this.createPath,
       method: 'POST',
       body: deviceParams,
       token: options.token,
@@ -52,7 +54,7 @@ export class DeviceClient {
     }
 
     return this.#request({
-      path: `${this.devicePath}/${encodeURIComponent(String(id))}`,
+      path: `${this.updatePath}/${encodeURIComponent(String(id))}`,
       method: options.method ? normalizeMethod(options.method, ['PATCH', 'PUT']) : this.updateMethod,
       body: deviceParams,
       token: options.token,
@@ -105,7 +107,7 @@ function stripTrailingSlash(value) {
 
 function normalizePath(value) {
   if (!value) {
-    return '/devices';
+    throw new Error('A path value is required.');
   }
 
   return value.startsWith('/') ? value : `/${value}`;
