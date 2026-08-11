@@ -1,0 +1,151 @@
+export class ApiError extends Error {
+  constructor(message, { status, body, headers, method, url } = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.body = body;
+    this.headers = headers;
+    this.method = method;
+    this.url = url;
+  }
+}
+
+export class DeviceClient {
+  constructor({
+    baseUrl,
+    token,
+    fetch: fetchImpl = globalThis.fetch,
+    devicePath = '/devices',
+    updateMethod = 'PATCH',
+    defaultHeaders = {},
+  } = {}) {
+    if (!baseUrl) {
+      throw new Error('`baseUrl` is required.');
+    }
+
+    if (typeof fetchImpl !== 'function') {
+      throw new Error('A Fetch API implementation is required.');
+    }
+
+    this.baseUrl = stripTrailingSlash(baseUrl);
+    this.token = token;
+    this.fetch = fetchImpl;
+    this.devicePath = normalizePath(devicePath);
+    this.updateMethod = normalizeMethod(updateMethod, ['PATCH', 'PUT']);
+    this.defaultHeaders = { ...defaultHeaders };
+  }
+
+  async createDevice(deviceParams, options = {}) {
+    return this.#request({
+      path: this.devicePath,
+      method: 'POST',
+      body: deviceParams,
+      token: options.token,
+      headers: options.headers,
+      signal: options.signal,
+    });
+  }
+
+  async updateDevice(id, deviceParams, options = {}) {
+    if (id === null || id === undefined || id === '') {
+      throw new Error('`id` is required.');
+    }
+
+    return this.#request({
+      path: `${this.devicePath}/${encodeURIComponent(String(id))}`,
+      method: options.method ? normalizeMethod(options.method, ['PATCH', 'PUT']) : this.updateMethod,
+      body: deviceParams,
+      token: options.token,
+      headers: options.headers,
+      signal: options.signal,
+    });
+  }
+
+  async #request({ path, method, body, token, headers = {}, signal }) {
+    const url = `${this.baseUrl}${path}`;
+    const resolvedToken = await resolveToken(token ?? this.token);
+
+    const requestHeaders = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...this.defaultHeaders,
+      ...headers,
+    };
+
+    if (resolvedToken) {
+      requestHeaders.Authorization = `Bearer ${resolvedToken}`;
+    }
+
+    const response = await this.fetch(url, {
+      method,
+      headers: requestHeaders,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal,
+    });
+
+    const parsedBody = await parseResponseBody(response);
+
+    if (!response.ok) {
+      throw new ApiError(buildErrorMessage(method, url, response.status, parsedBody), {
+        status: response.status,
+        body: parsedBody,
+        headers: response.headers,
+        method,
+        url,
+      });
+    }
+
+    return parsedBody;
+  }
+}
+
+function stripTrailingSlash(value) {
+  return value.endsWith('/') ? value.slice(0, -1) : value;
+}
+
+function normalizePath(value) {
+  if (!value) {
+    return '/devices';
+  }
+
+  return value.startsWith('/') ? value : `/${value}`;
+}
+
+function normalizeMethod(value, allowed) {
+  const normalized = String(value).toUpperCase();
+
+  if (!allowed.includes(normalized)) {
+    throw new Error(`Invalid HTTP method \`${value}\`. Allowed values: ${allowed.join(', ')}.`);
+  }
+
+  return normalized;
+}
+
+async function resolveToken(token) {
+  if (typeof token === 'function') {
+    return token();
+  }
+
+  return token;
+}
+
+async function parseResponseBody(response) {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return response.json();
+  }
+
+  const text = await response.text();
+  return text.length > 0 ? text : null;
+}
+
+function buildErrorMessage(method, url, status, body) {
+  const detail = body && typeof body === 'object'
+    ? body.message || body.error || JSON.stringify(body)
+    : body;
+
+  return detail
+    ? `${method} ${url} failed with ${status}: ${detail}`
+    : `${method} ${url} failed with ${status}`;
+}

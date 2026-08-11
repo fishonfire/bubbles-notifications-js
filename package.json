@@ -1,0 +1,28 @@
+{
+  "name": "bubbles-device-client",
+  "version": "0.1.0",
+  "description": "Zero-dependency client for creating and updating devices via a bearer-auth API.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "api-client",
+    "device",
+    "bearer-auth",
+    "fetch",
+    "npm-package"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
