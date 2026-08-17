@@ -63,6 +63,21 @@ export class DeviceClient {
     });
   }
 
+  async postDeliveryStatus(deliveryId, payload, options = {}) {
+    if (deliveryId === null || deliveryId === undefined || deliveryId === '') {
+      throw new Error('`deliveryId` is required.');
+    }
+
+    await this.#request({
+      path: `/api/deliveries/${encodeURIComponent(String(deliveryId))}/status`,
+      method: 'PUT',
+      body: payload,
+      token: options.token,
+      headers: options.headers,
+      signal: options.signal,
+    });
+  }
+
   async #request({ path, method, body, token, headers = {}, signal }) {
     const url = `${this.baseUrl}${path}`;
     const resolvedToken = await resolveToken(token ?? this.token);

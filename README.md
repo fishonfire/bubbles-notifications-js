@@ -6,6 +6,7 @@ It currently supports:
 
 - `createDevice` — create a device
 - `updateDevice` — update a device
+- `postDeliveryStatus` — post delivery status updates
 
 ## Install
 
@@ -36,6 +37,7 @@ const client = new DeviceClient({
 
 // create -> POST /api/devices/create
 // update -> PUT /api/devices/:id
+// delivery status -> PUT /api/deliveries/:id/status
 
 const created = await client.createDevice({
   device_token: 'abc123',
@@ -44,6 +46,10 @@ const created = await client.createDevice({
 
 const updated = await client.updateDevice(created.id, {
   platform: 'android',
+});
+
+await client.postDeliveryStatus('delivery-123', {
+  status: 'delivered',
 });
 ```
 

@@ -55,6 +55,27 @@ test('updateDevice can override method to PATCH', async () => {
   assert.equal(calls[0].options.method, 'PATCH');
 });
 
+test('postDeliveryStatus sends PUT request to /api/deliveries/:id/status', async () => {
+  const calls = [];
+  const client = new DeviceClient({
+    baseUrl: 'https://api.example.com/',
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      return mockJsonResponse(204, null);
+    },
+  });
+
+  const result = await client.postDeliveryStatus('delivery/123', {
+    status: 'delivered',
+  });
+
+  assert.equal(result, undefined);
+  assert.equal(calls[0].url, 'https://api.example.com/api/deliveries/delivery%2F123/status');
+  assert.equal(calls[0].options.method, 'PUT');
+  assert.equal(calls[0].options.headers['Content-Type'], 'application/json');
+  assert.equal(calls[0].options.body, JSON.stringify({ status: 'delivered' }));
+});
+
 test('throws ApiError for unauthorized responses', async () => {
   const client = new DeviceClient({
     baseUrl: 'https://api.example.com',

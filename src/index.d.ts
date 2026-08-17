@@ -50,4 +50,13 @@ export class DeviceClient {
     deviceParams: TBody,
     options?: UpdateDeviceOptions
   ): Promise<TResponse>;
+
+  postDeliveryStatus(
+    deliveryId: string,
+    payload: {
+      error?: string;
+      status?: string;
+    },
+    options?: RequestOptions
+  ): Promise<void>;
 }
