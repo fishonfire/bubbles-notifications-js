@@ -18,6 +18,11 @@ export interface DeviceClientOptions {
   defaultHeaders?: Record<string, string>;
 }
 
+export interface LocaleAndTimeZone {
+  locale: string;
+  timeZone?: string;
+}
+
 export class ApiError<TBody = unknown> extends Error {
   status?: number;
   body?: TBody;
@@ -60,3 +65,5 @@ export class DeviceClient {
     options?: RequestOptions
   ): Promise<void>;
 }
+
+export function getLocaleAndTimeZone(): LocaleAndTimeZone;

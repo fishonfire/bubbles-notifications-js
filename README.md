@@ -7,6 +7,7 @@ It currently supports:
 - `createDevice` — create a device
 - `updateDevice` — update a device
 - `postDeliveryStatus` — post delivery status updates
+- `getLocaleAndTimeZone` — read the current device locale and time zone
 
 ## Install
 
@@ -28,12 +29,14 @@ If your API paths change later, you can configure them.
 ## Usage
 
 ```js
-import { DeviceClient } from 'bubbles-device-client';
+import { DeviceClient, getLocaleAndTimeZone } from 'bubbles-device-client';
 
 const client = new DeviceClient({
   baseUrl: 'https://api.example.com',
   token: 'your-jwt-or-access-token',
 });
+
+const { locale, timeZone } = getLocaleAndTimeZone();
 
 // create -> POST /api/devices/create
 // update -> PUT /api/devices/:id

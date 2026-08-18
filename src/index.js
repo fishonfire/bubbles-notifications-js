@@ -10,6 +10,15 @@ export class ApiError extends Error {
   }
 }
 
+export function getLocaleAndTimeZone() {
+  const resolvedOptions = new Intl.DateTimeFormat().resolvedOptions();
+
+  return {
+    locale: resolvedOptions.locale,
+    timeZone: resolvedOptions.timeZone,
+  };
+}
+
 export class DeviceClient {
   constructor({
     baseUrl,

@@ -1,7 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { ApiError, DeviceClient } from '../src/index.js';
+import { ApiError, DeviceClient, getLocaleAndTimeZone } from '../src/index.js';
+
+test('getLocaleAndTimeZone returns locale and timeZone from Intl', () => {
+  const result = getLocaleAndTimeZone();
+
+  assert.equal(typeof result.locale, 'string');
+  assert.ok(result.locale.length > 0);
+
+  if (result.timeZone !== undefined) {
+    assert.equal(typeof result.timeZone, 'string');
+    assert.ok(result.timeZone.length > 0);
+  }
+});
 
 test('createDevice sends POST request to /api/devices/create with bearer token and JSON body', async () => {
   const calls = [];
