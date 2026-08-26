@@ -51,7 +51,7 @@ export class DeviceClient {
       path: this.createPath,
       method: 'POST',
       body: deviceParams,
-      token: options.token,
+      useToken: false,
       headers: options.headers,
       signal: options.signal,
     });
@@ -66,7 +66,7 @@ export class DeviceClient {
       path: `${this.updatePath}/${encodeURIComponent(String(id))}`,
       method: options.method ? normalizeMethod(options.method, ['PATCH', 'PUT']) : this.updateMethod,
       body: deviceParams,
-      token: options.token,
+      useToken: false,
       headers: options.headers,
       signal: options.signal,
     });
@@ -81,15 +81,15 @@ export class DeviceClient {
       path: `/api/deliveries/${encodeURIComponent(String(deliveryId))}/status`,
       method: 'PUT',
       body: payload,
-      token: options.token,
+      useToken: false,
       headers: options.headers,
       signal: options.signal,
     });
   }
 
-  async #request({ path, method, body, token, headers = {}, signal }) {
+  async #request({ path, method, body, token, useToken = true, headers = {}, signal }) {
     const url = `${this.baseUrl}${path}`;
-    const resolvedToken = await resolveToken(token ?? this.token);
+    const resolvedToken = useToken ? await resolveToken(token ?? this.token) : null;
 
     const requestHeaders = {
       Accept: 'application/json',

@@ -1,7 +1,7 @@
 {
   "name": "bubbles-npm-user-app",
   "version": "0.1.0",
-  "description": "Zero-dependency client for creating and updating devices via a bearer-auth API.",
+  "description": "Zero-dependency client for creating and updating devices via an HTTP API.",
   "type": "module",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -22,7 +22,6 @@
   "keywords": [
     "api-client",
     "device",
-    "bearer-auth",
     "fetch",
     "npm-package"
   ],

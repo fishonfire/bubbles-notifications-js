@@ -1,6 +1,6 @@
 # bubbles-device-client
 
-A small zero-dependency npm package for interacting with a bearer-authenticated device API.
+A small zero-dependency npm package for interacting with a device API.
 
 It currently supports:
 
@@ -21,7 +21,6 @@ Based on the concrete routes you shared, this package now defaults to:
 
 - create endpoint: `POST /api/devices/create`
 - update endpoint: `PUT /api/devices/:id`
-- bearer authentication via `Authorization: Bearer <token>`
 - JSON request and response bodies
 
 If your API paths change later, you can configure them.
@@ -33,7 +32,6 @@ import { DeviceClient, getLocaleAndTimeZone } from 'bubbles-device-client';
 
 const client = new DeviceClient({
   baseUrl: 'https://api.example.com',
-  token: 'your-jwt-or-access-token',
 });
 
 const { locale, timeZone } = getLocaleAndTimeZone();
@@ -89,9 +87,9 @@ const client = new DeviceClient({
 });
 ```
 
-## Async token provider
+## Optional token support
 
-If you refresh tokens dynamically:
+If an endpoint still needs bearer auth, you can provide a token or async token provider:
 
 ```js
 const client = new DeviceClient({
@@ -131,7 +129,6 @@ interface Device {
 
 const client = new DeviceClient({
   baseUrl: 'https://api.example.com',
-  token: 'secret',
 });
 
 const device = await client.createDevice<Device>({

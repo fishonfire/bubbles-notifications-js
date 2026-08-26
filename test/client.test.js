@@ -15,7 +15,7 @@ test('getLocaleAndTimeZone returns locale and timeZone from Intl', () => {
   }
 });
 
-test('createDevice sends POST request to /api/devices/create with bearer token and JSON body', async () => {
+test('createDevice sends POST request to /api/devices/create with JSON body and no bearer token', async () => {
   const calls = [];
   const client = new DeviceClient({
     baseUrl: 'https://api.example.com/',
@@ -31,7 +31,7 @@ test('createDevice sends POST request to /api/devices/create with bearer token a
   assert.deepEqual(result, { id: 42, name: "Jane's Phone" });
   assert.equal(calls[0].url, 'https://api.example.com/api/devices/create');
   assert.equal(calls[0].options.method, 'POST');
-  assert.equal(calls[0].options.headers.Authorization, 'Bearer token-123');
+  assert.equal(calls[0].options.headers.Authorization, undefined);
   assert.equal(calls[0].options.headers['Content-Type'], 'application/json');
   assert.equal(calls[0].options.body, JSON.stringify({ platform: 'ios', token: 'abc' }));
 });
@@ -105,7 +105,7 @@ test('throws ApiError for unauthorized responses', async () => {
   );
 });
 
-test('supports async token providers', async () => {
+test('postDeliveryStatus supports async token providers', async () => {
   const calls = [];
   const client = new DeviceClient({
     baseUrl: 'https://api.example.com',
@@ -116,7 +116,7 @@ test('supports async token providers', async () => {
     },
   });
 
-  await client.createDevice({ token: 'abc' });
+  await client.postDeliveryStatus('delivery-123', { status: 'delivered' });
 
   assert.equal(calls[0].options.headers.Authorization, 'Bearer dynamic-token');
 });
