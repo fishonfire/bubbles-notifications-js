@@ -38,7 +38,7 @@ const { locale, timeZone } = getLocaleAndTimeZone();
 
 // create -> POST /api/devices/create
 // update -> PUT /api/devices/:id
-// delivery status -> PUT /api/deliveries/:id/status
+// delivery status -> PUT /api/deliveries/status
 
 const created = await client.createDevice({
   device_token: 'abc123',
@@ -49,7 +49,7 @@ const updated = await client.updateDevice(created.id, {
   platform: 'android',
 });
 
-await client.postDeliveryStatus('delivery-123', {
+await client.postDeliveryStatus('device-123', 'notification-456', {
   status: 'delivered',
 });
 ```

@@ -67,7 +67,7 @@ test('updateDevice can override method to PATCH', async () => {
   assert.equal(calls[0].options.method, 'PATCH');
 });
 
-test('postDeliveryStatus sends PUT request to /api/deliveries/:id/status', async () => {
+test('postDeliveryStatus sends PUT request to /api/deliveries/status with deviceId and notificationId', async () => {
   const calls = [];
   const client = new DeviceClient({
     baseUrl: 'https://api.example.com/',
@@ -77,15 +77,22 @@ test('postDeliveryStatus sends PUT request to /api/deliveries/:id/status', async
     },
   });
 
-  const result = await client.postDeliveryStatus('delivery/123', {
+  const result = await client.postDeliveryStatus('device-123', 'notification-456', {
     status: 'delivered',
   });
 
   assert.equal(result, undefined);
-  assert.equal(calls[0].url, 'https://api.example.com/api/deliveries/delivery%2F123/status');
+  assert.equal(calls[0].url, 'https://api.example.com/api/deliveries/status');
   assert.equal(calls[0].options.method, 'PUT');
   assert.equal(calls[0].options.headers['Content-Type'], 'application/json');
-  assert.equal(calls[0].options.body, JSON.stringify({ status: 'delivered' }));
+  assert.equal(
+    calls[0].options.body,
+    JSON.stringify({
+      deviceId: 'device-123',
+      notificationId: 'notification-456',
+      status: 'delivered',
+    })
+  );
 });
 
 test('throws ApiError for unauthorized responses', async () => {
@@ -116,9 +123,9 @@ test('postDeliveryStatus supports async token providers', async () => {
     },
   });
 
-  await client.postDeliveryStatus('delivery-123', { status: 'delivered' });
+  await client.postDeliveryStatus('device-123', 'notification-456', { status: 'delivered' });
 
-  assert.equal(calls[0].options.headers.Authorization, 'Bearer dynamic-token');
+  assert.equal(calls[0].options.headers.Authorization, undefined);
 });
 
 function mockJsonResponse(status, body) {

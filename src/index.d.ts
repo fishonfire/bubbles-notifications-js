@@ -57,7 +57,8 @@ export class DeviceClient {
   ): Promise<TResponse>;
 
   postDeliveryStatus(
-    deliveryId: string,
+    deviceId: string,
+    notificationId: string,
     payload: {
       error?: string;
       status?: string;

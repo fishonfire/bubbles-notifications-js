@@ -72,15 +72,23 @@ export class DeviceClient {
     });
   }
 
-  async postDeliveryStatus(deliveryId, payload, options = {}) {
-    if (deliveryId === null || deliveryId === undefined || deliveryId === '') {
-      throw new Error('`deliveryId` is required.');
+  async postDeliveryStatus(deviceId, notificationId, payload, options = {}) {
+    if (deviceId === null || deviceId === undefined || deviceId === '') {
+      throw new Error('`deviceId` is required.');
+    }
+
+    if (notificationId === null || notificationId === undefined || notificationId === '') {
+      throw new Error('`notificationId` is required.');
     }
 
     await this.#request({
-      path: `/api/deliveries/${encodeURIComponent(String(deliveryId))}/status`,
+      path: '/api/deliveries/status',
       method: 'PUT',
-      body: payload,
+      body: {
+        deviceId,
+        notificationId,
+        ...payload,
+      },
       useToken: false,
       headers: options.headers,
       signal: options.signal,
