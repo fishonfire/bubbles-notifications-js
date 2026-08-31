@@ -1,5 +1,5 @@
 {
-  "name": "bubbles-npm-user-app",
+  "name": "@fishonfire/bubbles-js",
   "version": "0.1.0",
   "description": "Zero-dependency client for creating and updating devices via an HTTP API.",
   "type": "module",
