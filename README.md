@@ -6,6 +6,7 @@ It currently supports:
 
 - `createDevice` — create a device
 - `updateDevice` — update a device
+- `updateDeviceAttributes` — update device attributes
 - `postDeliveryStatus` — post delivery status updates
 - `getLocaleAndTimeZone` — read the current device locale and time zone
 
@@ -21,6 +22,7 @@ Based on the concrete routes you shared, this package now defaults to:
 
 - create endpoint: `POST /api/devices/create`
 - update endpoint: `PUT /api/devices/:id`
+- attributes endpoint: `POST /api/devices/:device_id/attributes`
 - JSON request and response bodies
 
 If your API paths change later, you can configure them.
@@ -38,6 +40,7 @@ const { locale, timeZone } = getLocaleAndTimeZone();
 
 // create -> POST /api/devices/create
 // update -> PUT /api/devices/:id
+// attributes -> POST /api/devices/:device_id/attributes
 // delivery status -> PUT /api/deliveries/status
 
 const created = await client.createDevice({
@@ -47,6 +50,11 @@ const created = await client.createDevice({
 
 const updated = await client.updateDevice(created.id, {
   platform: 'android',
+});
+
+await client.updateDeviceAttributes(created.id, {
+  app_version: '1.2.3',
+  notifications_enabled: true,
 });
 
 await client.postDeliveryStatus('device-123', 'notification-456', {

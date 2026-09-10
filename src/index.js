@@ -72,6 +72,21 @@ export class DeviceClient {
     });
   }
 
+  async updateDeviceAttributes(deviceId, attributes, options = {}) {
+    if (deviceId === null || deviceId === undefined || deviceId === '') {
+      throw new Error('`deviceId` is required.');
+    }
+
+    return this.#request({
+      path: `${this.updatePath}/${encodeURIComponent(String(deviceId))}/attributes`,
+      method: 'POST',
+      body: { attributes },
+      useToken: false,
+      headers: options.headers,
+      signal: options.signal,
+    });
+  }
+
   async postDeliveryStatus(deviceId, notificationId, payload, options = {}) {
     if (deviceId === null || deviceId === undefined || deviceId === '') {
       throw new Error('`deviceId` is required.');

@@ -56,6 +56,12 @@ export class DeviceClient {
     options?: UpdateDeviceOptions
   ): Promise<TResponse>;
 
+  updateDeviceAttributes<TResponse = unknown, TAttributes = Record<string, unknown>>(
+    deviceId: string | number,
+    attributes: TAttributes,
+    options?: RequestOptions
+  ): Promise<TResponse>;
+
   postDeliveryStatus(
     deviceId: string,
     notificationId: string,

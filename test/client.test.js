@@ -67,6 +67,39 @@ test('updateDevice can override method to PATCH', async () => {
   assert.equal(calls[0].options.method, 'PATCH');
 });
 
+test('updateDeviceAttributes sends POST request to /api/devices/:device_id/attributes', async () => {
+  const calls = [];
+  const client = new DeviceClient({
+    baseUrl: 'https://api.example.com/',
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      return mockJsonResponse(200, { id: 'device 123' });
+    },
+  });
+
+  const result = await client.updateDeviceAttributes('device 123', {
+    app_version: '1.2.3',
+    enabled: true,
+    preferences: { alerts: ['mentions'] },
+  });
+
+  assert.deepEqual(result, { id: 'device 123' });
+  assert.equal(calls[0].url, 'https://api.example.com/api/devices/device%20123/attributes');
+  assert.equal(calls[0].options.method, 'POST');
+  assert.equal(calls[0].options.headers.Authorization, undefined);
+  assert.equal(calls[0].options.headers['Content-Type'], 'application/json');
+  assert.equal(
+    calls[0].options.body,
+    JSON.stringify({
+      attributes: {
+        app_version: '1.2.3',
+        enabled: true,
+        preferences: { alerts: ['mentions'] },
+      },
+    })
+  );
+});
+
 test('postDeliveryStatus sends PUT request to /api/deliveries/status with deviceId and notificationId', async () => {
   const calls = [];
   const client = new DeviceClient({
