@@ -158,4 +158,4 @@ npm test
 ## Copyright and Licence
 Copyright (c) 2026, Fish on Fire.
 
-Javascript source code is licensed under the [`GPL License`](https://github.com/fishonfire/bubbles-notifications-js/blob/develop/LICENSE).
+Source code is licensed under the [`GPL License`](https://github.com/fishonfire/bubbles-notifications-js/blob/develop/LICENSE).
