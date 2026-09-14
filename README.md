@@ -1,4 +1,4 @@
-# bubbles-device-client
+# @fishonfire/bubbles-js
 
 A small zero-dependency npm package for interacting with a device API.
 
@@ -13,7 +13,7 @@ It currently supports:
 ## Install
 
 ```bash
-npm install bubbles-device-client
+npm install @fishonfire/bubbles-js
 ```
 
 ## API defaults
@@ -30,7 +30,7 @@ If your API paths change later, you can configure them.
 ## Usage
 
 ```js
-import { DeviceClient, getLocaleAndTimeZone } from 'bubbles-device-client';
+import { DeviceClient, getLocaleAndTimeZone } from '@fishonfire/bubbles-js';
 
 const client = new DeviceClient({
   baseUrl: 'https://api.example.com',
@@ -111,7 +111,7 @@ const client = new DeviceClient({
 Non-2xx responses throw `ApiError`.
 
 ```js
-import { ApiError } from 'bubbles-device-client';
+import { ApiError } from '@fishonfire/bubbles-js';
 
 try {
   await client.createDevice({ device_token: 'abc123' });
@@ -128,7 +128,7 @@ try {
 Type declarations are included in `src/index.d.ts`.
 
 ```ts
-import { DeviceClient } from 'bubbles-device-client';
+import { DeviceClient } from '@fishonfire/bubbles-js';
 
 interface Device {
   id: number;
@@ -149,3 +149,13 @@ const device = await client.createDevice<Device>({
 ```bash
 npm test
 ```
+
+## Contributors
+- Simon de la Court (https://github.com/simondelacourt)
+- Jan Deen (https://github.com/Jan-F15H)
+- Menno Jongejan (https://github.com/mennolpFoF)
+
+## Copyright and Licence
+Copyright (c) 2026, Fish on Fire.
+
+Source code is licensed under the [`GPL License`](https://github.com/fishonfire/bubbles-notifications-js/blob/develop/LICENSE).
