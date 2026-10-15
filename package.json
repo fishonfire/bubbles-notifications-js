@@ -18,8 +18,9 @@
   ],
   "scripts": {
     "build": "npm pack --dry-run --cache .npm-cache",
-    "lint": "eslint .",
-    "test": "node --test"
+    "lint": "eslint . --ext .js,.cjs,.ts --max-warnings 0",
+    "test": "node --test",
+    "lint:fix": "npm run lint -- --fix"
   },
   "keywords": [
     "api-client",
@@ -32,7 +33,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^10.10.0"
+    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/parser": "^5.59.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-sonarjs": "^0.19.0",
+    "typescript": "~5.0.4"
   },
   "publishConfig": {
     "access": "public"
