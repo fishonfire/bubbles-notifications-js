@@ -11,6 +11,12 @@ module.exports = {
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   plugins: ['@typescript-eslint', 'sonarjs'],
   ignorePatterns: ['.npm-cache/'],
+  overrides: [
+    {
+      files: ['**/*.d.ts'],
+      rules: { 'lines-between-class-members': 'off' }
+    }
+  ],
   rules: {
     'indent': ['error', 2],
     'linebreak-style': ['error', 'unix'],

@@ -25,13 +25,9 @@ export interface LocaleAndTimeZone {
 
 export class ApiError<TBody = unknown> extends Error {
   status?: number
-
   body?: TBody
-
   headers?: Headers
-
   method?: string
-
   url?: string
 
   constructor(
