@@ -144,11 +144,19 @@ const device = await client.createDevice<Device>({
 });
 ```
 
-## Scripts
+## Development
+
+Use Node.js 22 (22.13 or newer) for development, matching CI. Node.js 24 and newer are also supported. The published client still supports Node.js 18 and newer; ESLint 10 requires a newer development runtime.
 
 ```bash
+npm ci
+npm run lint
+npm run lint:fix
 npm test
+npm run build
 ```
+
+Linting uses ESLint flat config with current TypeScript ESLint recommended checks and the non-React Fish on Fire rules. Formatting rules use the maintained ESLint Stylistic plugin. The original SonarJS rule set is preserved explicitly rather than enabling unrelated rules added by newer presets; its retired loop rule maps to ESLint's `no-unreachable-loop`. Declaration files allow adjacent class members.
 
 ## Contributors
 - Simon de la Court (https://github.com/simondelacourt)

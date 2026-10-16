@@ -1,65 +1,67 @@
+const JSON_CONTENT_TYPE = 'application/json'
+
 export class ApiError extends Error {
-  constructor(message, { status, body, headers, method, url } = {}) {
-    super(message);
-    this.name = 'ApiError';
-    this.status = status;
-    this.body = body;
-    this.headers = headers;
-    this.method = method;
-    this.url = url;
+  constructor (message, { status, body, headers, method, url } = {}) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.body = body
+    this.headers = headers
+    this.method = method
+    this.url = url
   }
 }
 
-export function getLocaleAndTimeZone() {
-  const resolvedOptions = new Intl.DateTimeFormat().resolvedOptions();
+export function getLocaleAndTimeZone () {
+  const resolvedOptions = new Intl.DateTimeFormat().resolvedOptions()
 
   return {
     locale: resolvedOptions.locale,
-    timeZone: resolvedOptions.timeZone,
-  };
+    timeZone: resolvedOptions.timeZone
+  }
 }
 
 export class DeviceClient {
-  constructor({
+  constructor ({
     baseUrl,
     token,
     fetch: fetchImpl = globalThis.fetch,
     createPath = '/api/devices/create',
     updatePath = '/api/devices',
     updateMethod = 'PUT',
-    defaultHeaders = {},
+    defaultHeaders = {}
   } = {}) {
     if (!baseUrl) {
-      throw new Error('`baseUrl` is required.');
+      throw new Error('`baseUrl` is required.')
     }
 
     if (typeof fetchImpl !== 'function') {
-      throw new Error('A Fetch API implementation is required.');
+      throw new Error('A Fetch API implementation is required.')
     }
 
-    this.baseUrl = stripTrailingSlash(baseUrl);
-    this.token = token;
-    this.fetch = fetchImpl;
-    this.createPath = normalizePath(createPath);
-    this.updatePath = normalizePath(updatePath);
-    this.updateMethod = normalizeMethod(updateMethod, ['PATCH', 'PUT']);
-    this.defaultHeaders = { ...defaultHeaders };
+    this.baseUrl = stripTrailingSlash(baseUrl)
+    this.token = token
+    this.fetch = fetchImpl
+    this.createPath = normalizePath(createPath)
+    this.updatePath = normalizePath(updatePath)
+    this.updateMethod = normalizeMethod(updateMethod, ['PATCH', 'PUT'])
+    this.defaultHeaders = { ...defaultHeaders }
   }
 
-  async createDevice(deviceParams, options = {}) {
+  async createDevice (deviceParams, options = {}) {
     return this.#request({
       path: this.createPath,
       method: 'POST',
       body: deviceParams,
       useToken: false,
       headers: options.headers,
-      signal: options.signal,
-    });
+      signal: options.signal
+    })
   }
 
-  async updateDevice(id, deviceParams, options = {}) {
+  async updateDevice (id, deviceParams, options = {}) {
     if (id === null || id === undefined || id === '') {
-      throw new Error('`id` is required.');
+      throw new Error('`id` is required.')
     }
 
     return this.#request({
@@ -68,13 +70,13 @@ export class DeviceClient {
       body: deviceParams,
       useToken: false,
       headers: options.headers,
-      signal: options.signal,
-    });
+      signal: options.signal
+    })
   }
 
-  async updateDeviceAttributes(deviceId, attributes, options = {}) {
+  async updateDeviceAttributes (deviceId, attributes, options = {}) {
     if (deviceId === null || deviceId === undefined || deviceId === '') {
-      throw new Error('`deviceId` is required.');
+      throw new Error('`deviceId` is required.')
     }
 
     return this.#request({
@@ -83,17 +85,17 @@ export class DeviceClient {
       body: { attributes },
       useToken: false,
       headers: options.headers,
-      signal: options.signal,
-    });
+      signal: options.signal
+    })
   }
 
-  async postDeliveryStatus(deviceId, notificationId, payload, options = {}) {
+  async postDeliveryStatus (deviceId, notificationId, payload, options = {}) {
     if (deviceId === null || deviceId === undefined || deviceId === '') {
-      throw new Error('`deviceId` is required.');
+      throw new Error('`deviceId` is required.')
     }
 
     if (notificationId === null || notificationId === undefined || notificationId === '') {
-      throw new Error('`notificationId` is required.');
+      throw new Error('`notificationId` is required.')
     }
 
     await this.#request({
@@ -102,37 +104,37 @@ export class DeviceClient {
       body: {
         deviceId,
         notificationId,
-        ...payload,
+        ...payload
       },
       useToken: false,
       headers: options.headers,
-      signal: options.signal,
-    });
+      signal: options.signal
+    })
   }
 
-  async #request({ path, method, body, token, useToken = true, headers = {}, signal }) {
-    const url = `${this.baseUrl}${path}`;
-    const resolvedToken = useToken ? await resolveToken(token ?? this.token) : null;
+  async #request ({ path, method, body, token, useToken = true, headers = {}, signal }) {
+    const url = `${this.baseUrl}${path}`
+    const resolvedToken = useToken ? await resolveToken(token ?? this.token) : null
 
     const requestHeaders = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: JSON_CONTENT_TYPE,
+      'Content-Type': JSON_CONTENT_TYPE,
       ...this.defaultHeaders,
-      ...headers,
-    };
+      ...headers
+    }
 
     if (resolvedToken) {
-      requestHeaders.Authorization = `Bearer ${resolvedToken}`;
+      requestHeaders.Authorization = `Bearer ${resolvedToken}`
     }
 
     const response = await this.fetch(url, {
       method,
       headers: requestHeaders,
       body: body === undefined ? undefined : JSON.stringify(body),
-      signal,
-    });
+      signal
+    })
 
-    const parsedBody = await parseResponseBody(response);
+    const parsedBody = await parseResponseBody(response)
 
     if (!response.ok) {
       throw new ApiError(buildErrorMessage(method, url, response.status, parsedBody), {
@@ -140,61 +142,62 @@ export class DeviceClient {
         body: parsedBody,
         headers: response.headers,
         method,
-        url,
-      });
+        url
+      })
     }
 
-    return parsedBody;
+    return parsedBody
   }
 }
 
-function stripTrailingSlash(value) {
-  return value.endsWith('/') ? value.slice(0, -1) : value;
+function stripTrailingSlash (value) {
+  return value.endsWith('/') ? value.slice(0, -1) : value
 }
 
-function normalizePath(value) {
+function normalizePath (value) {
   if (!value) {
-    throw new Error('A path value is required.');
+    throw new Error('A path value is required.')
   }
 
-  return value.startsWith('/') ? value : `/${value}`;
+  return value.startsWith('/') ? value : `/${value}`
 }
 
-function normalizeMethod(value, allowed) {
-  const normalized = String(value).toUpperCase();
+function normalizeMethod (value, allowed) {
+  const normalized = String(value).toUpperCase()
 
   if (!allowed.includes(normalized)) {
-    throw new Error(`Invalid HTTP method \`${value}\`. Allowed values: ${allowed.join(', ')}.`);
+    throw new Error(`Invalid HTTP method \`${value}\`. Allowed values: ${allowed.join(', ')}.`)
   }
 
-  return normalized;
+  return normalized
 }
 
-async function resolveToken(token) {
+async function resolveToken (token) {
   if (typeof token === 'function') {
-    return token();
+    return token()
   }
 
-  return token;
+  return token
 }
 
-async function parseResponseBody(response) {
-  const contentType = response.headers.get('content-type') || '';
+async function parseResponseBody (response) {
+  const contentType = response.headers.get('content-type') || ''
 
-  if (contentType.includes('application/json')) {
-    return response.json();
+  if (contentType.includes(JSON_CONTENT_TYPE)) {
+    return response.json()
   }
 
-  const text = await response.text();
-  return text.length > 0 ? text : null;
+  const text = await response.text()
+
+  return text.length > 0 ? text : null
 }
 
-function buildErrorMessage(method, url, status, body) {
+function buildErrorMessage (method, url, status, body) {
   const detail = body && typeof body === 'object'
     ? body.message || body.error || JSON.stringify(body)
-    : body;
+    : body
 
   return detail
     ? `${method} ${url} failed with ${status}: ${detail}`
-    : `${method} ${url} failed with ${status}`;
+    : `${method} ${url} failed with ${status}`
 }

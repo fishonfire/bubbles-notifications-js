@@ -24,13 +24,13 @@ export interface LocaleAndTimeZone {
 }
 
 export class ApiError<TBody = unknown> extends Error {
-  status?: number;
-  body?: TBody;
-  headers?: Headers;
-  method?: string;
-  url?: string;
+  status?: number
+  body?: TBody
+  headers?: Headers
+  method?: string
+  url?: string
 
-  constructor(
+  constructor (
     message: string,
     options?: {
       status?: number;
@@ -39,30 +39,30 @@ export class ApiError<TBody = unknown> extends Error {
       method?: string;
       url?: string;
     }
-  );
+  )
 }
 
 export class DeviceClient {
-  constructor(options: DeviceClientOptions);
+  constructor (options: DeviceClientOptions)
 
   createDevice<TResponse = unknown, TBody = Record<string, unknown>>(
     deviceParams: TBody,
     options?: RequestOptions
-  ): Promise<TResponse>;
+  ): Promise<TResponse>
 
   updateDevice<TResponse = unknown, TBody = Record<string, unknown>>(
     id: string | number,
     deviceParams: TBody,
     options?: UpdateDeviceOptions
-  ): Promise<TResponse>;
+  ): Promise<TResponse>
 
   updateDeviceAttributes<TResponse = unknown, TAttributes = Record<string, unknown>>(
     deviceId: string | number,
     attributes: TAttributes,
     options?: RequestOptions
-  ): Promise<TResponse>;
+  ): Promise<TResponse>
 
-  postDeliveryStatus(
+  postDeliveryStatus (
     deviceId: string,
     notificationId: string,
     payload: {
@@ -70,7 +70,7 @@ export class DeviceClient {
       status?: string;
     },
     options?: RequestOptions
-  ): Promise<void>;
+  ): Promise<void>
 }
 
-export function getLocaleAndTimeZone(): LocaleAndTimeZone;
+export function getLocaleAndTimeZone (): LocaleAndTimeZone
